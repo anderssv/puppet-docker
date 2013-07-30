@@ -70,7 +70,7 @@ echo " "
 echo "Running puppet"
 echo " "
 SSH_PORT=$(docker port $DOCKER_PS 22)
-ssh -q -i ssh-key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@$(hostIp) -p $SSH_PORT "./run_puppet.sh"
+ssh -q -i ssh_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@$(hostIp) -p $SSH_PORT "./run_puppet.sh"
 
 echo " "
 echo " Done ! $(date)"
