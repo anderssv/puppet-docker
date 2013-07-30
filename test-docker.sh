@@ -26,7 +26,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $SCRIPT_DIR/docker
 
 # Make sure the key is private, if not ssh will not use it
-chmod og-rwx ssh-*
+chmod og-rwx ssh_*
 
 echo " "
 
