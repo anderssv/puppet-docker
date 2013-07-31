@@ -5,6 +5,11 @@ PUPPET_DIR="$SCRIPT_DIR/puppet"
 DOCKER_DIR="$SCRIPT_DIR/docker"
 DOCKER_PUPPET_IMAGE="puppet-testbase"
 
+# Support setting a special puppet dir. This is mainly to support running in Vagrant.
+if [[ -e /puppet ]]; then
+	PUPPET_DIR="/puppet"
+fi
+
 function puppetImage() {
 	echo "$(imagePulled $DOCKER_PUPPET_IMAGE)"
 }
@@ -29,7 +34,7 @@ function hostIp() {
 function dockerRunning() {
 	local DOCKER_PS="$1"
 	if [[ "$(docker ps | grep $(cat docker.pid))" ]]; then
-		return true
+		echo "true"
 	fi
 }
 
