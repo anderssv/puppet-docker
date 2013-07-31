@@ -2,4 +2,4 @@
 
 cd /puppet
 
-puppet apply --modulepath modules manifests/local.pp
+puppet apply --modulepath modules manifests/local.pp --no-usecacheonfailure --verbose
