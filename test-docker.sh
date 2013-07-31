@@ -1,7 +1,9 @@
 #!/bin/bash -eu
 
+DOCKER_PUPPET_IMAGE="puppet-testbase"
+
 function puppetImage() {
-	echo "$(imagePulled puppet-testbase)"
+	echo "$(imagePulled $DOCKER_PUPPET_IMAGE)"
 }
 
 function imagePulled() {
@@ -44,7 +46,7 @@ if [[ ! "$(puppetImage)" ]]; then
 	echo "Need to build base image for puppet testing!"
 	echo "After this is done once, testing will run faster. :)"
 	echo " "
-	docker build -t="puppet-testbase" .
+	docker build -t="$DOCKER_PUPPET_IMAGE" .
 fi
 
 if [[ ! "$(puppetImage)" ]]; then
@@ -60,7 +62,7 @@ if [[ -e docker.pid && "$(docker ps | grep $(cat docker.pid))" ]]; then
 else
 	echo " "
 	echo "Creating docker container with SSH"
-	DOCKER_PS=$(docker run -d -h "puppettest.localdomain" -p 22 -t -v $SCRIPT_DIR:/puppet puppet-testbase /usr/sbin/sshd -D)
+	DOCKER_PS=$(docker run -d -h "puppettest.localdomain" -p 22 -t -v $SCRIPT_DIR:/puppet $DOCKER_PUPPET_IMAGE /usr/sbin/sshd -D)
 	echo $DOCKER_PS > docker.pid
 	echo "Docker container started: $DOCKER_PS"
 	echo " "
