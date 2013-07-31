@@ -1,5 +1,8 @@
 #!/bin/bash -eu
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PUPPET_DIR="$SCRIPT_DIR/puppet"
+DOCKER_DIR="$SCRIPT_DIR/docker"
 DOCKER_PUPPET_IMAGE="puppet-testbase"
 
 function puppetImage() {
@@ -23,9 +26,14 @@ function hostIp() {
 	echo "$(/sbin/ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')"
 }
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+function dockerRunning() {
+	local DOCKER_PS="$1"
+	if [[ "$(docker ps | grep $(cat docker.pid))" ]]; then
+		return true
+	fi
+}
 
-cd $SCRIPT_DIR/docker
+cd $DOCKER_DIR
 
 # Make sure the key is private, if not ssh will not use it
 chmod og-rwx ssh_*
@@ -54,16 +62,16 @@ if [[ ! "$(puppetImage)" ]]; then
 	exit 1
 fi
 
+DOCKER_PS=$(cat $DOCKER_DIR/docker.pid || true;)
 # If already created and still running. Stop the container to create a new one.
-if [[ -e docker.pid && "$(docker ps | grep $(cat docker.pid))" ]]; then
+if [[ "$(dockerRunning $DOCKER_PS)" ]]; then
 	echo " "
-	echo "Existing container found $(cat docker.pid), using that"
-	DOCKER_PS=$(cat docker.pid)
+	echo "Existing container found $DOCKER_PS, using that"
 else
 	echo " "
 	echo "Creating docker container with SSH"
-	DOCKER_PS=$(docker run -d -h "puppettest.localdomain" -p 22 -t -v $SCRIPT_DIR:/puppet $DOCKER_PUPPET_IMAGE /usr/sbin/sshd -D)
-	echo $DOCKER_PS > docker.pid
+	DOCKER_PS=$(docker run -d -h "puppettest.localdomain" -p 22 -t -v $PUPPET_DIR:/puppet -v $DOCKER_DIR:/docker $DOCKER_PUPPET_IMAGE /usr/sbin/sshd -D)
+	echo $DOCKER_PS > $DOCKER_DIR/docker.pid
 	echo "Docker container started: $DOCKER_PS"
 	echo " "
 fi
@@ -72,7 +80,7 @@ echo " "
 echo "Running puppet"
 echo " "
 SSH_PORT=$(docker port $DOCKER_PS 22)
-ssh -q -i ssh_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@$(hostIp) -p $SSH_PORT "/puppet/docker/run_puppet.sh"
+ssh -q -i ssh_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@$(hostIp) -p $SSH_PORT "/docker/run_puppet.sh"
 
 echo " "
 echo " Done ! $(date)"
