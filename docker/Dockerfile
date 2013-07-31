@@ -19,8 +19,5 @@ ADD     ssh_key /root/.ssh/id_rsa
 ADD     ssh_config /root/.ssh/config
 RUN     chmod 700 /root/.ssh && chown root:root /root/.ssh/* && chmod 600 /root/.ssh/*
 
-# Add the script to be run normally on testing
-ADD     run_puppet.sh /root/run_puppet.sh
-
 # Set password to fixed value
 RUN     echo "puppet" | passwd root --stdin
