@@ -7,13 +7,14 @@ VF_BOX_URI = ENV['BOX_URI'] || "http://files.vagrantup.com/precise64_vmware_fusi
 AWS_REGION = ENV['AWS_REGION'] || "us-east-1"
 AWS_AMI    = ENV['AWS_AMI']    || "ami-d0f89fb9"
 FORWARD_DOCKER_PORTS = ENV['FORWARD_DOCKER_PORTS']
+PUPPET_SOURCE = ENV['PUPPET_SOURCE'] || "./puppet"
 
 Vagrant::Config.run do |config|
   # Setup virtual machine box. This VM configuration code is always executed.
   config.vm.box = BOX_NAME
   config.vm.box_url = BOX_URI
   config.vm.forward_port 4243, 4243
-  config.vm.share_folder "puppet", "/puppet", "./puppet"
+  config.vm.share_folder "puppet", "/puppet", PUPPET_SOURCE
 
   # Provision docker and new kernel if deployment was not done
   if Dir.glob("#{File.dirname(__FILE__)}/.vagrant/machines/default/*/id").empty?

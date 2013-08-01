@@ -19,7 +19,7 @@ vagrant@precise64:~/puppet-docker$ docker kill c3a9324bad55
 ```
 
 # Puppet sources
-Because this uses the folder ```./puppet``` you can create a symlink to a different folder as long as it contains a modules and manifests folder. This is done so that you can use this project to test any puppet project without including all these files and setup.
+The default setup uses the included ```./puppet``` folder. If you'd like to test some other sources you can point to them by doing ```export PUPPET_SOURCE=/home/user/source/mypuppet```. Do this on your host machine and it will be used by the scripts if you are running in Linux, and picked up by Vagrant (Vagrant will map the dir to ```/puppet```).
 
 # Vagrant???
 Docker only runs on Ubuntu at the moment. So if you'd like to run this on anything else you can use Vagrant to launch a Ubuntu VM (like I do on OS X). The first launch will be slow, but after the first launch Vagrant shouldn't get in your way. The folder you start up in is mapped to ```/vagrant``` inside the box so the sources and scripts will be triggered there. Login and do:
@@ -29,7 +29,7 @@ vagrant up (wait for everything to finish)
 vagrant reload
 vagrant ssh
 cd /vargant
-./test-docker.sh
+./test-docker.sh (repeat after each change)
 ```
 
 # Reducing test time

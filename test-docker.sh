@@ -1,7 +1,7 @@
 #!/bin/bash -eu
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PUPPET_DIR="$SCRIPT_DIR/puppet"
+PUPPET_DIR="${PUPPET_SOURCE:-'$SCRIPT_DIR/puppet'}"
 DOCKER_DIR="$SCRIPT_DIR/docker"
 DOCKER_PUPPET_IMAGE="puppet-testbase"
 
