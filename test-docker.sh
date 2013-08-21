@@ -53,6 +53,9 @@ if [[ ! $DOCKER_PATH ]]; then
 	exit 1
 fi
 
+# Work around for security constraint in docker. Will be fixed later with groups.
+sudo chmod 777 /var/run/docker.sock
+
 echo " "
 if [[ ! "$(puppetImage)" ]]; then
 	echo " "

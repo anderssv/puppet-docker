@@ -8,6 +8,15 @@ The script should be self contained so just run ```./test-docker.sh``` to test t
 
 When you run the script the second time, the container will be re-used so only changes in the Puppet scripts should be applied.
 
+# How?
+This setup does a few things:
+- Install necessary packages for puppet and ssh
+- Compile an updated image as a one off to save time later
+- Launch a SSH daemon to enable running puppet and debugging
+- Run Puppet scripts automatically
+
+Docker containers are low overhead and fast to start up, so the real delay you experience comes from what the puppet scripts does. You only reset (see below) once in a while if there are new versions to Puppet etc.
+
 # Forcing a reset
 To make sure you start a new machine from scratch and apply all the changes you will have to kill the running container in docker. Find and kill like this:
 
