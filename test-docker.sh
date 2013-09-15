@@ -33,7 +33,7 @@ function hostIp() {
 
 function dockerRunning() {
 	local DOCKER_PS="$1"
-	if [[ "$(docker ps | grep $(cat docker.pid))" ]]; then
+	if [[ "$(docker ps | grep $DOCKER_PS)" ]]; then
 		echo "true"
 	fi
 }
