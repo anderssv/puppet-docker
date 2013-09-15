@@ -72,7 +72,7 @@ fi
 
 DOCKER_PS=$(cat $DOCKER_DIR/docker.pid || true;)
 # If already created and still running. Stop the container to create a new one.
-if [[ $DOCKER_PS && "$(dockerRunning "$DOCKER_PS")" ]]; then
+if [[ "$(dockerRunning "$DOCKER_PS")" ]]; then
 	echo " "
 	echo "Existing container found $DOCKER_PS, using that"
 else
