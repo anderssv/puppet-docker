@@ -3,9 +3,9 @@ Simple setup for testing Puppet scripts in isolation on a isolated "machine" wit
 # Requirements
 Install Docker according to instructions on http://docker.io . Clone this repository or export contents to a new one you intend to work on Puppet scripts in, and you should be all set.
 
-# Running
 If you're not on Ubuntu you'll want to check out the Vagrant section. :)
 
+# Running
 The script should be self contained so just run ```./test-docker.sh``` to test the Puppet scripts that you have in ```./puppet/manifests``` . Add modules to ```./puppet/modules``` .
 
 When you run the script the second time, the container will be re-used so only changes in the Puppet scripts should be applied.
