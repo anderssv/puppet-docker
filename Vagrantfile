@@ -54,7 +54,7 @@ Vagrant.configure("2") do |config|
   pkg_cmd = "sudo sh -c 'curl -s https://get.docker.io/gpg | apt-key add -'; " \
     "sudo sh -c 'echo deb https://get.docker.io/ubuntu docker main > /etc/apt/sources.list.d/docker.list'; " \
     "sudo apt-get update; " \
-    "sudo apt-get install -y lxc-docker linux-image-extra-3.8.0-30-generic; " \
+    "sudo apt-get install -y lxc-docker linux-image-extra-$(uname -r); " \
     "sudo addgroup docker; " \
     "sudo usermod -a -G docker vagrant; " \
     "sudo service docker restart; " \
