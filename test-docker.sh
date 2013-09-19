@@ -1,7 +1,7 @@
 #!/bin/bash -eu
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PUPPET_DIR="${PUPPET_SOURCE:-'$SCRIPT_DIR/puppet'}"
+PUPPET_DIR="${PUPPET_SOURCE:-$SCRIPT_DIR/puppet}"
 DOCKER_DIR="$SCRIPT_DIR/docker"
 DOCKER_PUPPET_IMAGE="puppet-testbase"
 
@@ -88,7 +88,7 @@ echo " "
 echo "Running puppet"
 echo " "
 SSH_PORT=$(docker port $DOCKER_PS 22)
-ssh -q -i ssh_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@$(hostIp) -p $SSH_PORT "/docker/run_puppet.sh"
+ssh -q -i ssh_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@localhost -p $SSH_PORT "/docker/run_puppet.sh"
 
 echo " "
 echo " Done ! $(date)"
