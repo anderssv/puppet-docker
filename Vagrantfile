@@ -55,7 +55,10 @@ Vagrant.configure("2") do |config|
     "sudo sh -c 'echo deb https://get.docker.io/ubuntu docker main > /etc/apt/sources.list.d/docker.list'; " \
     "sudo apt-get update; " \
     "sudo apt-get install -y lxc-docker linux-image-extra-3.8.0-30-generic; " \
-    "chmod 777 /var/run/docker.sock"
+    "sudo addgroup docker; " \
+    "sudo usermod -a -G docker vagrant; " \
+    "sudo service docker restart; " \
+    "sudo reboot now"
   config.vm.provision :shell, :inline => pkg_cmd
 
   # Enable provisioning with Puppet stand alone.  Puppet manifests
