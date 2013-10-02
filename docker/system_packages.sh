@@ -11,6 +11,7 @@ if test -f /etc/redhat-release ; then
 elif grep -q 'DISTRIB_ID=Ubuntu' /etc/lsb-release ; then
   apt-get update
   apt-get install -y puppet git openssh-server vim rubygems ruby-dev make gcc
+  mkdir /var/run/sshd
 fi
 echo "Installing librarian-puppet, this might take a while... :)"
 sh -c "gem install librarian-puppet"
