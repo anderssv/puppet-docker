@@ -8,6 +8,11 @@ If you're not on Ubuntu you'll want to check out the Vagrant section. :)
 # Running
 The script should be self contained so just run ```./test-docker.sh``` to test the Puppet scripts that you have in ```./puppet/manifests``` . Add modules to ```./puppet/modules``` .
 
+# Choosing the OS
+Setting the envionment variable ```DOCKER_OS``` allows you to choose Ubuntu or CentOS (Defaults to CentOS).
+
+eg. ```DOCKER_OS=UBUNTU ./test-docker.sh```
+
 When you run the script the second time, the container will be re-used so only changes in the Puppet scripts should be applied.
 
 # How?
