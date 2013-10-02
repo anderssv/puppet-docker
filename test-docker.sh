@@ -64,9 +64,9 @@ if [[ ! "$(puppetImage)" ]]; then
 	echo "After this is done once, testing will run faster. :)"
 	echo " "
 	if test ${DOCKER_OS} == CENTOS ; then
-		sed -i 's/^FROM\s+.*$/FROM centos/' ${DOCKER_DIR}/Dockerfile
+		sed -i 's/^FROM\s\+.*$/FROM centos/' ${DOCKER_DIR}/Dockerfile
 	elif test ${DOCKER_OS} == UBUNTU ; then
-		sed -i 's/^FROM\s+.*$/FROM ubuntu/' ${DOCKER_DIR}/Dockerfile
+		sed -i 's/^FROM\s\+.*$/FROM ubuntu/' ${DOCKER_DIR}/Dockerfile
 	else
 		echo "DOCKER_OS: ${DOCKER_OS} not supported only CENTOS and UBUNTU at the moment"
 		exit 1
