@@ -1,10 +1,13 @@
 #!/bin/bash -eu
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PUPPET_DIR="${PUPPET_SOURCE:-$SCRIPT_DIR/puppet}"
 DOCKER_DIR="$SCRIPT_DIR/docker"
-DOCKER_PUPPET_IMAGE="puppet-testbase"
-DOCKER_OS="${DOCKER_OS:-CENTOS}"
+
+PUPPET_DIR="${PUPPET_SOURCE:-$SCRIPT_DIR/puppet}"
+DOCKER_OS="${DOCKER_OS:-centos}"
+DOCKER_OS="$(echo ${DOCKER_OS} | tr '[:upper:]' '[:lower:]')"
+DOCKER_PUPPET_IMAGE="${DOCKER_PUPPET_IMAGE:-puppet-testbase-${DOCKER_OS}}"
+DOCKER_PID="${DOCKER_DIR}/docker-${DOCKER_OS}.pid"
 
 # Support setting a special puppet dir. This is mainly to support running in Vagrant.
 if [[ -e /puppet ]]; then
@@ -39,6 +42,13 @@ function dockerRunning() {
 	fi
 }
 
+function configureBaseImage() {
+	local DOCKER_OS="$1"
+	local DOCKER_TEMPLATE="$2"
+	local DOCKER_TARGET="$3"
+	sed "s/DOCKER_OS/${DOCKER_OS}/" ${DOCKER_TEMPLATE} > ${DOCKER_TARGET}
+}
+
 cd $DOCKER_DIR
 
 # Make sure the key is private, if not ssh will not use it
@@ -60,19 +70,14 @@ sudo chmod 777 /var/run/docker.sock
 echo " "
 if [[ ! "$(puppetImage)" ]]; then
 	echo " "
-	echo "Need to build base image for puppet testing!"
+	echo "Need to build base image (${DOCKER_PUPPET_IMAGE}) for puppet testing!"
 	echo "After this is done once, testing will run faster. :)"
 	echo " "
-	if test ${DOCKER_OS} == CENTOS ; then
-		sed -i 's/^FROM\s\+.*$/FROM centos/' ${DOCKER_DIR}/Dockerfile
-	elif test ${DOCKER_OS} == UBUNTU ; then
-		sed -i 's/^FROM\s\+.*$/FROM ubuntu/' ${DOCKER_DIR}/Dockerfile
-	else
-		echo "DOCKER_OS: ${DOCKER_OS} not supported only CENTOS and UBUNTU at the moment"
-		exit 1
-	fi
+	DOCKERFILE="${DOCKER_DIR}/Dockerfile"
+	configureBaseImage "${DOCKER_OS}" "${DOCKERFILE}.template" "${DOCKERFILE}"
 	echo "Building ${DOCKER_OS} image..."
 	docker build -t="$DOCKER_PUPPET_IMAGE" .
+	rm ${DOCKERFILE}
 fi
 
 if [[ ! "$(puppetImage)" ]]; then
@@ -80,7 +85,7 @@ if [[ ! "$(puppetImage)" ]]; then
 	exit 1
 fi
 
-DOCKER_PS=$(cat $DOCKER_DIR/docker.pid || true;)
+DOCKER_PS=$(cat $DOCKER_PID || true;)
 # If already created and still running. Stop the container to create a new one.
 if [[ "$(dockerRunning "$DOCKER_PS")" ]]; then
 	echo " "
@@ -90,7 +95,7 @@ else
 	echo "Creating docker container with SSH"
 	echo "Command: docker run -d -h 'puppettest.localdomain' -p 22 -t -v $PUPPET_DIR:/puppet -v $DOCKER_DIR:/docker $DOCKER_PUPPET_IMAGE /usr/sbin/sshd -D"
 	DOCKER_PS=$(docker run -d -h "puppettest.localdomain" -p 22 -t -v $PUPPET_DIR:/puppet -v $DOCKER_DIR:/docker $DOCKER_PUPPET_IMAGE /usr/sbin/sshd -D)
-	echo $DOCKER_PS > $DOCKER_DIR/docker.pid
+	echo $DOCKER_PS > $DOCKER_PID
 	echo "Docker container started: $DOCKER_PS"
 	echo " "
 fi
