@@ -88,6 +88,7 @@ if [[ "$(dockerRunning "$DOCKER_PS")" ]]; then
 else
 	echo " "
 	echo "Creating docker container with SSH"
+	echo "Command: docker run -d -h 'puppettest.localdomain' -p 22 -t -v $PUPPET_DIR:/puppet -v $DOCKER_DIR:/docker $DOCKER_PUPPET_IMAGE /usr/sbin/sshd -D"
 	DOCKER_PS=$(docker run -d -h "puppettest.localdomain" -p 22 -t -v $PUPPET_DIR:/puppet -v $DOCKER_DIR:/docker $DOCKER_PUPPET_IMAGE /usr/sbin/sshd -D)
 	echo $DOCKER_PS > $DOCKER_DIR/docker.pid
 	echo "Docker container started: $DOCKER_PS"
@@ -97,6 +98,8 @@ fi
 echo " "
 echo "Running puppet"
 echo " "
+# Sleeping to let everything start up. Nasty...
+sleep 1s
 SSH_PORT=$(docker port $DOCKER_PS 22)
 ssh -q -i ssh_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@localhost -p $SSH_PORT "/docker/run_puppet.sh"
 
