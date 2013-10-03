@@ -4,6 +4,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PUPPET_DIR="${PUPPET_SOURCE:-$SCRIPT_DIR/puppet}"
 DOCKER_DIR="$SCRIPT_DIR/docker"
 DOCKER_PUPPET_IMAGE="puppet-testbase"
+DOCKER_OS="${DOCKER_OS:-CENTOS}"
 
 # Support setting a special puppet dir. This is mainly to support running in Vagrant.
 if [[ -e /puppet ]]; then
@@ -62,6 +63,15 @@ if [[ ! "$(puppetImage)" ]]; then
 	echo "Need to build base image for puppet testing!"
 	echo "After this is done once, testing will run faster. :)"
 	echo " "
+	if test ${DOCKER_OS} == CENTOS ; then
+		sed -i 's/^FROM\s\+.*$/FROM centos/' ${DOCKER_DIR}/Dockerfile
+	elif test ${DOCKER_OS} == UBUNTU ; then
+		sed -i 's/^FROM\s\+.*$/FROM ubuntu/' ${DOCKER_DIR}/Dockerfile
+	else
+		echo "DOCKER_OS: ${DOCKER_OS} not supported only CENTOS and UBUNTU at the moment"
+		exit 1
+	fi
+	echo "Building ${DOCKER_OS} image..."
 	docker build -t="$DOCKER_PUPPET_IMAGE" .
 fi
 

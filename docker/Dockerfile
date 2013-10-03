@@ -20,4 +20,4 @@ ADD     ssh_config /root/.ssh/config
 RUN     chmod 700 /root/.ssh && chown root:root /root/.ssh/* && chmod 600 /root/.ssh/*
 
 # Set password to fixed value
-RUN     echo "puppet" | passwd root --stdin
+RUN     echo "root:puppet" | chpasswd -

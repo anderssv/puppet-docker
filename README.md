@@ -10,6 +10,12 @@ The script should be self contained so just run ```./test-docker.sh``` to test t
 
 When you run the script the second time, the container will be re-used so only changes in the Puppet scripts should be applied.
 
+## Choosing the OS
+Setting the envionment variable ```DOCKER_OS``` allows you to choose Ubuntu or CentOS (Defaults to CentOS).
+
+eg. ```DOCKER_OS=UBUNTU ./test-docker.sh```
+
+
 # How?
 This setup does a few things:
 - Install necessary packages for puppet and ssh
