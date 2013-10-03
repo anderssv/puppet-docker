@@ -20,6 +20,8 @@ Setting the envionment variable ```DOCKER_OS``` allows you to choose Ubuntu or C
 
 eg. ```DOCKER_OS=UBUNTU ./test-docker.sh```
 
+WARNING: Currently, the provided Puppet scripts only runs correctly on CentOS
+
 Watch what you are typing, because the value is not error checked. If you wan't to add another OS, all you need to do is add a new ```docker/system_packages_osname.sh``` to install what you need. For now the other scripts like ```run_puppet.sh``` is not OS specific.
 
 # How?
