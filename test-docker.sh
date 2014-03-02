@@ -27,14 +27,6 @@ function dockerVersion() {
 	echo "$(docker version | grep Server | cut -d ":" -f2 | tr -d ' ')"
 }
 
-function dnsIp() {
-	echo "$(echo $(hostIp) | cut -f1-3 -d '.').2"
-}
-
-function hostIp() {
-	echo "$(/sbin/ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')"
-}
-
 function dockerRunning() {
 	local DOCKER_PS="$1"
 	if [[ "$(docker ps | grep $DOCKER_PS)" ]]; then
@@ -48,6 +40,7 @@ function configureBaseImage() {
 	local DOCKER_TARGET="$3"
 	sed "s/DOCKER_OS/${DOCKER_OS}/" ${DOCKER_TEMPLATE} > ${DOCKER_TARGET}
 }
+
 
 cd $DOCKER_DIR
 
@@ -105,7 +98,8 @@ echo "Running puppet"
 echo " "
 # Sleeping to let everything start up. Nasty...
 sleep 1s
-SSH_PORT=$(docker port $DOCKER_PS 22)
+echo $DOCKER_PS
+SSH_PORT=$(docker port $DOCKER_PS 22 | cut -f2 -d ':')
 ssh -q -i ssh_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@localhost -p $SSH_PORT "/docker/run_puppet.sh"
 
 echo " "

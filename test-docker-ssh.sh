@@ -2,12 +2,9 @@
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 DOCKER_DIR="$SCRIPT_DIR/docker"
+DOCKER_OS="${DOCKER_OS:-centos}"
 
 cd $DOCKER_DIR
-
-function hostIp() {
-	echo "$(/sbin/ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')"
-}
 
 function dockerRunning() {
 	local DOCKER_PS="$1"
@@ -16,6 +13,6 @@ function dockerRunning() {
 	fi
 }
 
-DOCKER_PS=$(cat $DOCKER_DIR/docker.pid || true;)
-SSH_PORT=$(docker port $DOCKER_PS 22)
-ssh -q -i ssh_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@$(hostIp) -p $SSH_PORT
+DOCKER_PS=$(cat $DOCKER_DIR/docker-$DOCKER_OS.pid || true;)
+SSH_PORT=$(docker port $DOCKER_PS 22 | cut -f2 -d ':')
+ssh -q -i ssh_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@localhost -p $SSH_PORT
